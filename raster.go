@@ -7,6 +7,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/binary"
 	"log"
 	"runtime"
 
@@ -55,6 +56,7 @@ type instance struct {
 	inCall  bool
 	surface *sdl.Surface
 	window  *sdl.Window
+	grabbed bool
 }
 
 func newInstance(config packet.Service) *instance {
@@ -130,20 +132,50 @@ func (inst *instance) handleReply(ctx context.Context, send chan<- packet.Buf) {
 				break
 			}
 
+			b := make([]byte, 8)
+
 			switch e := event.(type) {
 			case *sdl.QuitEvent:
-				reply.WriteByte(1)
-				reply.Write(make([]byte, 7))
+				b[0] = 1
 
 			case *sdl.KeyboardEvent:
 				if e.Type == sdl.KEYDOWN {
-					reply.WriteByte(2)
+					if inst.grabbed && e.Keysym.Scancode == sdl.SCANCODE_ESCAPE {
+						inst.window.SetGrab(false)
+						sdl.SetRelativeMouseMode(false)
+						sdl.ShowCursor(sdl.ENABLE)
+						inst.grabbed = false
+					}
+					b[0] = 2
 				} else {
-					reply.WriteByte(3)
+					b[0] = 3
 				}
-				reply.WriteByte(byte(e.Keysym.Scancode))
-				reply.Write(make([]byte, 6))
+				b[1] = byte(e.Keysym.Scancode)
+
+			case *sdl.MouseButtonEvent:
+				if e.State == sdl.PRESSED {
+					if !inst.grabbed {
+						inst.window.SetGrab(true)
+						sdl.SetRelativeMouseMode(true)
+						sdl.ShowCursor(sdl.DISABLE)
+						inst.grabbed = true
+						continue
+					}
+					b[0] = 4
+				} else {
+					b[0] = 5
+				}
+				b[1] = e.Button
+
+			case *sdl.MouseMotionEvent:
+				if inst.grabbed {
+					b[0] = 6
+					binary.LittleEndian.PutUint16(b[4:], uint16(e.XRel))
+					binary.LittleEndian.PutUint16(b[6:], uint16(e.YRel))
+				}
 			}
+
+			reply.Write(b)
 		}
 	}
 
