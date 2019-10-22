@@ -9,12 +9,12 @@ LIBDIR		:= $(PREFIX)/lib/gate
 export GO111MODULE := on
 
 build:
-	$(GO) build $(GOBUILDFLAGS) -buildmode=plugin -o lib/gate/plugin/savo.la/gate/raster.so
+	$(GO) build $(GOBUILDFLAGS) -buildmode=plugin -o lib/gate/plugin/raster.so
 	$(GO) vet ./...
 
 install:
-	install -m 755 -d $(DESTDIR)$(LIBDIR)/plugin/savo.la/gate
-	install -m 644 lib/gate/plugin/savo.la/gate/raster.so $(DESTDIR)$(LIBDIR)/plugin/savo.la/gate
+	install -m 755 -d $(DESTDIR)$(LIBDIR)/plugin
+	install -m 644 lib/gate/plugin/raster.so $(DESTDIR)$(LIBDIR)/plugin/
 
 clean:
 	rm -rf lib
