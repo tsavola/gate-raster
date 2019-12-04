@@ -140,7 +140,7 @@ func (inst *instance) handleReply(ctx context.Context, send chan<- packet.Buf) {
 
 			case *sdl.KeyboardEvent:
 				if e.Type == sdl.KEYDOWN {
-					if inst.grabbed && e.Keysym.Scancode == sdl.SCANCODE_ESCAPE {
+					if inst.grabbed && e.Keysym.Scancode == sdl.SCANCODE_RALT {
 						inst.window.SetGrab(false)
 						sdl.SetRelativeMouseMode(false)
 						sdl.ShowCursor(sdl.ENABLE)
