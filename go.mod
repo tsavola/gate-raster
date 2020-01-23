@@ -1,4 +1,4 @@
-module savo.la/gate/raster
+module gate.computer/raster
 
 go 1.11
 

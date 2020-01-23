@@ -6,6 +6,7 @@ github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMn
 github.com/coreos/go-systemd v0.0.0-20180507124335-65cc0ad82617/go.mod h1:F5haX7vjVVG0kc13fIWeqUViNPyEJxv/OmvnBo0Yme4=
 github.com/coreos/go-systemd v0.0.0-20180509093606-65cc0ad82617/go.mod h1:F5haX7vjVVG0kc13fIWeqUViNPyEJxv/OmvnBo0Yme4=
 github.com/coreos/go-systemd/v22 v22.0.0/go.mod h1:xO0FLkIi5MaZafQlIrOotqXZ90ih+1atmu1JpKERPPk=
+github.com/dvyukov/go-fuzz v0.0.0-20191022152526-8cb203812681/go.mod h1:11Gm+ccJnvAhCNLlf5+cS9KjtbaD5I5zaZpFMsTHWTw=
 github.com/godbus/dbus/v5 v5.0.3/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5xrFpKfA=
 github.com/gogo/protobuf v0.0.0-20180829064059-3cefc55c28cf/go.mod h1:r8qH/GZQm5c6nD/R0oafs1akxWv10x8SbQlK7atdtwQ=
 github.com/google/uuid v1.0.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
@@ -24,10 +25,8 @@ github.com/tsavola/confi v1.3.0/go.mod h1:jDz8ndC0blU/9D7QrKGKULsFxiDqoLZ2rCoaC6
 github.com/tsavola/gate v0.0.0-20190922205826-5d17ce7875cd h1:5B5q0aIAtQ99xuJpODzgBBwTicp1g2wwqW3kUQIEHTw=
 github.com/tsavola/gate v0.0.0-20190922205826-5d17ce7875cd/go.mod h1:3JpaLd/3n6xRf3mW/QkO0nyqHtcSZM1ZbV8Def8QAm4=
 github.com/tsavola/listen v0.0.0-20190402175335-61229ef6a38c/go.mod h1:mvjKRkLD4rvc91gFN0bwazjw9lMm0JvJHnohO+OaXcU=
-github.com/tsavola/wag v0.20.2 h1:KGQ3fkESsp5fItPio17/tS6K60R5BvRY0J+7H0ax+i0=
-github.com/tsavola/wag v0.20.2/go.mod h1:Di1FKhgmB5TC1JKpl5mLNASOynmQF1a4SI77e3efAO8=
-github.com/tsavola/wag v0.26.0 h1:3IzvMVtGbRpXRvewzBppMgXKyYPrfhJTIAjQbVPbNN0=
-github.com/tsavola/wag v0.26.0/go.mod h1:seuL8MHRkNC/rHd872yjIF9zpnQnFlGymOv+bN/uvB0=
+github.com/tsavola/wag v0.29.0 h1:mPEXmxcwfUv0JNbRXXFlMGwmmOzB5zhGZLXXJVzhE/c=
+github.com/tsavola/wag v0.29.0/go.mod h1:xIUyXe10Wd1w4V+vb7hcuZBwyxPXfihJBRRCKwfUMJg=
 github.com/veandco/go-sdl2 v0.3.3 h1:4/TirgB2MQ7oww3pM3Yfgf1YbChMlAQAmiCPe5koK0I=
 github.com/veandco/go-sdl2 v0.3.3/go.mod h1:FB+kTpX9YTE+urhYiClnRzpOXbiWgaU3+5F2AB78DPg=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
