@@ -12,8 +12,8 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/tsavola/gate/packet"
-	"github.com/tsavola/gate/service"
+	"gate.computer/gate/packet"
+	"gate.computer/gate/service"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
