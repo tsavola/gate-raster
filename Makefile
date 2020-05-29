@@ -9,7 +9,7 @@ LIBDIR		:= $(PREFIX)/lib/gate
 export GO111MODULE := on
 
 build:
-	$(GO) build -trimpath $(GOBUILDFLAGS) -buildmode=plugin -o lib/gate/plugin/raster.so
+	$(GO) build $(GOBUILDFLAGS) -buildmode=plugin -o lib/gate/plugin/raster.so
 	$(GO) vet ./...
 
 install:
