@@ -18,8 +18,8 @@ import (
 )
 
 const (
-	ServiceName    = "gate.computer/raster"
-	ServiceVersion = "0"
+	serviceName     = "gate.computer/raster"
+	serviceRevision = "0"
 )
 
 const initialScale = 4
@@ -31,8 +31,8 @@ func InitServices(registry *service.Registry) (err error) {
 
 type raster struct{}
 
-func (raster) ServiceName() string               { return ServiceName }
-func (raster) ServiceVersion() string            { return ServiceVersion }
+func (raster) ServiceName() string               { return serviceName }
+func (raster) ServiceRevision() string           { return serviceRevision }
 func (raster) Discoverable(context.Context) bool { return true }
 
 func (raster) CreateInstance(ctx context.Context, config service.InstanceConfig) service.Instance {
@@ -96,20 +96,20 @@ func (inst *instance) handleCall(ctx context.Context, send chan<- packet.Buf, p 
 			if err == nil {
 				inst.surface = s
 			} else {
-				log.Printf("%s: %v", ServiceName, err)
+				log.Printf("%s: %v", serviceName, err)
 			}
 		})
 	}
 
 	if inst.window == nil {
 		do(func() {
-			w, err := sdl.CreateWindow(ServiceName, sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
+			w, err := sdl.CreateWindow(serviceName, sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
 				320*initialScale, 200*initialScale, sdl.WINDOW_SHOWN|sdl.WINDOW_RESIZABLE)
 			if err == nil {
 				subscribeWindowEvents(w)
 				inst.window = w
 			} else {
-				log.Printf("%s: %v", ServiceName, err)
+				log.Printf("%s: %v", serviceName, err)
 			}
 		})
 	}
@@ -225,23 +225,23 @@ func (inst *instance) draw(p packet.Buf) {
 			return nil
 		}()
 		if err != nil {
-			log.Printf("%s: %v", ServiceName, err)
+			log.Printf("%s: %v", serviceName, err)
 			return
 		}
 
 		s, err := inst.window.GetSurface()
 		if err != nil {
-			log.Printf("%s: %v", ServiceName, err)
+			log.Printf("%s: %v", serviceName, err)
 			return
 		}
 
 		if err := inst.surface.BlitScaled(nil, s, nil); err != nil {
-			log.Printf("%s: %v", ServiceName, err)
+			log.Printf("%s: %v", serviceName, err)
 			return
 		}
 
 		if err := inst.window.UpdateSurface(); err != nil {
-			log.Printf("%s: %v", ServiceName, err)
+			log.Printf("%s: %v", serviceName, err)
 			return
 		}
 	})
