@@ -24,9 +24,8 @@ const (
 
 const initialScale = 4
 
-func InitServices(registry *service.Registry) (err error) {
-	registry.Register(raster{})
-	return
+func InitServices(ctx context.Context, registry *service.Registry) error {
+	return registry.Register(raster{})
 }
 
 type raster struct{}
@@ -247,8 +246,8 @@ func (inst *instance) draw(p packet.Buf) {
 	})
 }
 
-func (inst *instance) Suspend() (snapshot []byte) {
-	inst.Shutdown()
+func (inst *instance) Suspend(ctx context.Context) (snapshot []byte) {
+	inst.Shutdown(ctx)
 
 	if !inst.inCall {
 		return
@@ -258,7 +257,7 @@ func (inst *instance) Suspend() (snapshot []byte) {
 	return
 }
 
-func (inst *instance) Shutdown() {
+func (inst *instance) Shutdown(ctx context.Context) {
 	if inst.window != nil {
 		do(func() {
 			unsubscribeWindowEvents(inst.window)
