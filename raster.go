@@ -30,15 +30,18 @@ func InitServices(ctx context.Context, registry *service.Registry) error {
 
 type raster struct{}
 
-func (raster) ServiceName() string               { return serviceName }
-func (raster) ServiceRevision() string           { return serviceRevision }
-func (raster) Discoverable(context.Context) bool { return true }
-
-func (raster) CreateInstance(ctx context.Context, config service.InstanceConfig) service.Instance {
-	return newInstance(config.Service)
+func (raster) Service() service.Service {
+	return service.Service{
+		Name:     serviceName,
+		Revision: serviceRevision,
+	}
 }
 
-func (raster) RestoreInstance(ctx context.Context, config service.InstanceConfig, snapshot []byte,
+func (raster) Discoverable(context.Context) bool {
+	return true
+}
+
+func (raster) CreateInstance(ctx context.Context, config service.InstanceConfig, snapshot []byte,
 ) (service.Instance, error) {
 	inst := newInstance(config.Service)
 	if err := inst.restore(snapshot); err != nil {
@@ -49,6 +52,8 @@ func (raster) RestoreInstance(ctx context.Context, config service.InstanceConfig
 }
 
 type instance struct {
+	service.InstanceBase
+
 	packet.Service
 
 	inCall  bool
@@ -73,19 +78,23 @@ func (inst *instance) restore(snapshot []byte) (err error) {
 	return
 }
 
-func (inst *instance) Resume(ctx context.Context, send chan<- packet.Buf) {
+func (inst *instance) Start(ctx context.Context, send chan<- packet.Buf, abort func(error)) error {
 	if inst.inCall {
 		initRun()
 		inst.handleReply(ctx, send)
 	}
+
+	return nil
 }
 
-func (inst *instance) Handle(ctx context.Context, send chan<- packet.Buf, p packet.Buf) {
+func (inst *instance) Handle(ctx context.Context, send chan<- packet.Buf, p packet.Buf) error {
 	if p.Domain() == packet.DomainCall {
 		initRun()
 		inst.inCall = true
 		inst.handleCall(ctx, send, p)
 	}
+
+	return nil
 }
 
 func (inst *instance) handleCall(ctx context.Context, send chan<- packet.Buf, p packet.Buf) {
@@ -246,18 +255,7 @@ func (inst *instance) draw(p packet.Buf) {
 	})
 }
 
-func (inst *instance) Suspend(ctx context.Context) (snapshot []byte) {
-	inst.Shutdown(ctx)
-
-	if !inst.inCall {
-		return
-	}
-
-	snapshot = []byte{1}
-	return
-}
-
-func (inst *instance) Shutdown(ctx context.Context) {
+func (inst *instance) shutdown() {
 	if inst.window != nil {
 		do(func() {
 			unsubscribeWindowEvents(inst.window)
@@ -272,6 +270,22 @@ func (inst *instance) Shutdown(ctx context.Context) {
 			inst.surface = nil
 		})
 	}
+}
+
+func (inst *instance) Shutdown(ctx context.Context) error {
+	inst.shutdown()
+	return nil
+}
+
+func (inst *instance) Suspend(ctx context.Context) (snapshot []byte, err error) {
+	inst.shutdown()
+
+	if !inst.inCall {
+		return
+	}
+
+	snapshot = []byte{1}
+	return
 }
 
 type task struct {
