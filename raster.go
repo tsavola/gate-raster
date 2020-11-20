@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	serviceName     = "gate.computer/raster"
+	serviceName     = "savo.la/gate/raster"
 	serviceRevision = "0"
 )
 
