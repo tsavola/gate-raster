@@ -1,10 +1,8 @@
 module savo.la/gate/raster
 
-go 1.11
+go 1.13
 
 require (
-	gate.computer/gate v0.0.0-20200521155900-8e9391cc8f78
-	github.com/veandco/go-sdl2 v0.3.3
+	gate.computer/gate v0.0.0-20210220013651-0b4ac1803fb7
+	github.com/veandco/go-sdl2 v0.4.5
 )
-
-replace gate.computer/gate => ../gate

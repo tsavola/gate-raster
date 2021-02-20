@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package main
+package raster
 
 import (
 	"bytes"
@@ -18,15 +18,16 @@ import (
 )
 
 const (
+	extName         = "raster"
 	serviceName     = "savo.la/gate/raster"
 	serviceRevision = "0"
 )
 
 const initialScale = 4
 
-func InitServices(ctx context.Context, registry *service.Registry) error {
-	return registry.Register(raster{})
-}
+var Ext = service.Extend(extName, nil, func(ctx context.Context, r *service.Registry) error {
+	return r.Register(raster{})
+})
 
 type raster struct{}
 
