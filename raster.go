@@ -31,10 +31,12 @@ var Ext = service.Extend(extName, nil, func(ctx context.Context, r *service.Regi
 
 type raster struct{}
 
-func (raster) Service() service.Service {
-	return service.Service{
-		Name:     serviceName,
-		Revision: serviceRevision,
+func (raster) Properties() service.Properties {
+	return service.Properties{
+		Service: service.Service{
+			Name:     serviceName,
+			Revision: serviceRevision,
+		},
 	}
 }
 
@@ -44,12 +46,7 @@ func (raster) Discoverable(context.Context) bool {
 
 func (raster) CreateInstance(ctx context.Context, config service.InstanceConfig, snapshot []byte,
 ) (service.Instance, error) {
-	inst := newInstance(config.Service)
-	if err := inst.restore(snapshot); err != nil {
-		return nil, err
-	}
-
-	return inst, nil
+	return newInstance(config.Service), nil
 }
 
 type instance struct {
@@ -57,7 +54,6 @@ type instance struct {
 
 	packet.Service
 
-	inCall  bool
 	surface *sdl.Surface
 	window  *sdl.Window
 	grabbed bool
@@ -69,36 +65,13 @@ func newInstance(config packet.Service) *instance {
 	}
 }
 
-func (inst *instance) restore(snapshot []byte) (err error) {
-	if len(snapshot) == 0 {
-		return
+func (inst *instance) Handle(ctx context.Context, send chan<- packet.Thunk, p packet.Buf) (packet.Buf, error) {
+	if p.Domain() != packet.DomainCall {
+		return nil, nil
 	}
 
-	flags := snapshot[0]
-	inst.inCall = flags&1 != 0
-	return
-}
+	initRun()
 
-func (inst *instance) Start(ctx context.Context, send chan<- packet.Buf, abort func(error)) error {
-	if inst.inCall {
-		initRun()
-		inst.handleReply(ctx, send)
-	}
-
-	return nil
-}
-
-func (inst *instance) Handle(ctx context.Context, send chan<- packet.Buf, p packet.Buf) error {
-	if p.Domain() == packet.DomainCall {
-		initRun()
-		inst.inCall = true
-		inst.handleCall(ctx, send, p)
-	}
-
-	return nil
-}
-
-func (inst *instance) handleCall(ctx context.Context, send chan<- packet.Buf, p packet.Buf) {
 	if inst.surface == nil {
 		do(func() {
 			s, err := sdl.CreateRGBSurfaceWithFormat(0, 320, 200, 32, sdl.PIXELFORMAT_ARGB8888)
@@ -124,10 +97,7 @@ func (inst *instance) handleCall(ctx context.Context, send chan<- packet.Buf, p 
 	}
 
 	inst.draw(p)
-	inst.handleReply(ctx, send)
-}
 
-func (inst *instance) handleReply(ctx context.Context, send chan<- packet.Buf) {
 	reply := bytes.NewBuffer(packet.MakeCall(inst.Code, 8)[:packet.HeaderSize])
 
 	if inst.window != nil {
@@ -194,13 +164,7 @@ func (inst *instance) handleReply(ctx context.Context, send chan<- packet.Buf) {
 		})
 	}
 
-	select {
-	case send <- reply.Bytes():
-		inst.inCall = false
-
-	case <-ctx.Done():
-		return
-	}
+	return reply.Bytes(), nil
 }
 
 func (inst *instance) draw(p packet.Buf) {
@@ -278,15 +242,9 @@ func (inst *instance) Shutdown(ctx context.Context) error {
 	return nil
 }
 
-func (inst *instance) Suspend(ctx context.Context) (snapshot []byte, err error) {
+func (inst *instance) Suspend(ctx context.Context) ([]byte, error) {
 	inst.shutdown()
-
-	if !inst.inCall {
-		return
-	}
-
-	snapshot = []byte{1}
-	return
+	return nil, nil
 }
 
 type task struct {
@@ -401,5 +359,3 @@ func pollWindowEvent(w *sdl.Window) (e sdl.Event) {
 var runInit sync.Once
 var tasks = make(chan task)
 var windowEvents = make(map[uint32][]sdl.Event)
-
-func main() {}
