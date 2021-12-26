@@ -220,7 +220,7 @@ func (inst *instance) draw(p packet.Buf) {
 	})
 }
 
-func (inst *instance) shutdown() {
+func (inst *instance) Shutdown(ctx context.Context, suspend bool) ([]byte, error) {
 	if inst.window != nil {
 		do(func() {
 			unsubscribeWindowEvents(inst.window)
@@ -235,15 +235,7 @@ func (inst *instance) shutdown() {
 			inst.surface = nil
 		})
 	}
-}
 
-func (inst *instance) Shutdown(ctx context.Context) error {
-	inst.shutdown()
-	return nil
-}
-
-func (inst *instance) Suspend(ctx context.Context) ([]byte, error) {
-	inst.shutdown()
 	return nil, nil
 }
 
