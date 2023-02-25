@@ -1,7 +1,5 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 gate.computer/ga v0.0.0-20211218044256-b13e95063354/go.mod h1:ptFRNzPSeTorleDUxCozrDpJQS3r6tdBBnpJFOg3IJU=
-gate.computer/gate v0.0.0-20211223020657-8bf7b223f267 h1:My3uwNeMnODWKDW2ULzfc8DbUvAB5FpgiiFcf1oEJfA=
-gate.computer/gate v0.0.0-20211223020657-8bf7b223f267/go.mod h1:QQ2WKXreLZigt91AgUF9XcrtPp2dDC1hLEro4pHcBx8=
 gate.computer/gate v0.0.0-20211225112301-52aa9133d017 h1:GZNRoOQBi+eF4nE1qwRTA7aqSXrq73OXPGpjJkPfBLI=
 gate.computer/gate v0.0.0-20211225112301-52aa9133d017/go.mod h1:QQ2WKXreLZigt91AgUF9XcrtPp2dDC1hLEro4pHcBx8=
 gate.computer/wag v0.33.1-0.20211221154506-5a8a3a0740ab h1:6n3p135Y/5y6/z1fXl5se0w/uNYtcHnrO3C6ZGu7U9U=
@@ -89,8 +87,9 @@ golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20211007075335-d3039528d8ac/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
-golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e h1:fLOSk5Q00efkSvAm+4xcoXD+RRmLmmulPn5I3Y9F2EM=
 golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+golang.org/x/sys v0.1.0 h1:kunALQeHf1/185U1i0GOB/fy1IPRDDpuoOOqRReG57U=
+golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
 golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
