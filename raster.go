@@ -8,12 +8,13 @@ import (
 	"bytes"
 	"context"
 	"encoding/binary"
-	"log"
+	"log/slog"
 	"runtime"
 	"sync"
 
 	"gate.computer/gate/packet"
 	"gate.computer/gate/service"
+	"gate.computer/gate/service/logger"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -26,10 +27,12 @@ const (
 const initialScale = 4
 
 var Ext = service.Extend(extName, nil, func(ctx context.Context, r *service.Registry) error {
-	return r.Register(raster{})
+	return r.Register(raster{logger.MustContextual(ctx)})
 })
 
-type raster struct{}
+type raster struct {
+	log *slog.Logger
+}
 
 func (raster) Properties() service.Properties {
 	return service.Properties{
@@ -44,24 +47,26 @@ func (raster) Discoverable(context.Context) bool {
 	return true
 }
 
-func (raster) CreateInstance(ctx context.Context, config service.InstanceConfig, snapshot []byte,
+func (r raster) CreateInstance(ctx context.Context, config service.InstanceConfig, snapshot []byte,
 ) (service.Instance, error) {
-	return newInstance(config.Service), nil
+	return newInstance(config.Service, r.log), nil
 }
 
 type instance struct {
 	service.InstanceBase
 
 	packet.Service
+	log *slog.Logger
 
 	surface *sdl.Surface
 	window  *sdl.Window
 	grabbed bool
 }
 
-func newInstance(config packet.Service) *instance {
+func newInstance(config packet.Service, log *slog.Logger) *instance {
 	return &instance{
 		Service: config,
+		log:     log,
 	}
 }
 
@@ -78,7 +83,7 @@ func (inst *instance) Handle(ctx context.Context, send chan<- packet.Thunk, p pa
 			if err == nil {
 				inst.surface = s
 			} else {
-				log.Printf("%s: %v", serviceName, err)
+				inst.log.ErrorContext(ctx, "surface creation failed", "error", err)
 			}
 		})
 	}
@@ -91,12 +96,12 @@ func (inst *instance) Handle(ctx context.Context, send chan<- packet.Thunk, p pa
 				subscribeWindowEvents(w)
 				inst.window = w
 			} else {
-				log.Printf("%s: %v", serviceName, err)
+				inst.log.ErrorContext(ctx, "window creation failed", "error", err)
 			}
 		})
 	}
 
-	inst.draw(p)
+	inst.draw(ctx, p)
 
 	reply := bytes.NewBuffer(packet.MakeCall(inst.Code, 8)[:packet.HeaderSize])
 
@@ -167,7 +172,7 @@ func (inst *instance) Handle(ctx context.Context, send chan<- packet.Thunk, p pa
 	return reply.Bytes(), nil
 }
 
-func (inst *instance) draw(p packet.Buf) {
+func (inst *instance) draw(ctx context.Context, p packet.Buf) {
 	if inst.surface == nil || inst.window == nil {
 		return
 	}
@@ -198,23 +203,23 @@ func (inst *instance) draw(p packet.Buf) {
 			return nil
 		}()
 		if err != nil {
-			log.Printf("%s: %v", serviceName, err)
+			inst.log.ErrorContext(ctx, "surface locking failed", "error", err)
 			return
 		}
 
 		s, err := inst.window.GetSurface()
 		if err != nil {
-			log.Printf("%s: %v", serviceName, err)
+			inst.log.ErrorContext(ctx, "window surface error", "error", err)
 			return
 		}
 
 		if err := inst.surface.BlitScaled(nil, s, nil); err != nil {
-			log.Printf("%s: %v", serviceName, err)
+			inst.log.ErrorContext(ctx, "bitting failed", "error", err)
 			return
 		}
 
 		if err := inst.window.UpdateSurface(); err != nil {
-			log.Printf("%s: %v", serviceName, err)
+			inst.log.ErrorContext(ctx, "window surface update failed", "error", err)
 			return
 		}
 	})
